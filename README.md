@@ -1,12 +1,6 @@
 # xmip-core-identify-dns
 
-Identify by dns: reads the peer's reverse name, from the resolver the node is given; a transport-layer identifier whose claim is detected. A technology of
-[xmip-core-identify](https://github.com/IlleNilsson/xmip-core-identify).
-
-Declared and not yet written; `architecture.toml` carries the maturity. When
-it is written it implements `TransportIdentifier`, one mechanism at one gate (ADR-0050).
-What it may depend on is `repository-model.md` section 4 and ADR-0044: its
-capability, and no sibling.
+Identify by dns: the peer's reverse name from the resolver the node is given, forward-confirmed; a transport-layer claim, detected. A technology of [xmip-core-identify](https://github.com/IlleNilsson/xmip-core-identify).
 
 ## Toolchain
 
