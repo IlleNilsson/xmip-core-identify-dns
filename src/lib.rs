@@ -26,17 +26,15 @@
 //! nothing here.
 //!
 //! Property name this technology reads: `peer.address` (defined by
-//! the capability, `identify::peer`). Evidence it writes: `peer.address` and
+//! `xmip-core-net`, `net::PEER_ADDRESS`). Evidence it writes: `peer.address` and
 //! `dns.forward-confirmed`, always `true` on a claim it presents.
 
 pub mod resolver;
 
 use identify::{IdentifyError, Presented, StreamArrival, TransportIdentifier};
+use net::PEER_ADDRESS;
 pub use resolver::{Resolver, StaticResolver};
 use xcore::{Arriving, Mechanism};
-
-/// The arrival property the transport puts the socket peer on.
-pub use identify::peer::PEER_ADDRESS;
 
 /// Reads the peer's reverse name through the node's resolver.
 pub struct DnsIdentifier {
@@ -66,7 +64,7 @@ impl TransportIdentifier for DnsIdentifier {
         let Some(peer) = arrival.property(PEER_ADDRESS) else {
             return Ok(None);
         };
-        let peer = identify::peer::address(peer)?;
+        let peer = net::address::parse(peer)?;
 
         let Some(name) = self.resolver.reverse(peer)? else {
             return Ok(None);
