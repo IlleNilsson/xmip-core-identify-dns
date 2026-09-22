@@ -26,19 +26,17 @@
 //! nothing here.
 //!
 //! Property name this technology reads: `peer.address` (defined by
-//! `xmip-core-identify-ip`). Evidence it writes: `peer.address` and
+//! the capability, `identify::peer`). Evidence it writes: `peer.address` and
 //! `dns.forward-confirmed`, always `true` on a claim it presents.
 
 pub mod resolver;
-
-use std::net::{IpAddr, SocketAddr};
 
 use identify::{IdentifyError, Presented, StreamArrival, TransportIdentifier};
 pub use resolver::{Resolver, StaticResolver};
 use xcore::{Arriving, Mechanism};
 
 /// The arrival property the transport puts the socket peer on.
-pub const PEER_ADDRESS: &str = "peer.address";
+pub use identify::peer::PEER_ADDRESS;
 
 /// Reads the peer's reverse name through the node's resolver.
 pub struct DnsIdentifier {
@@ -68,7 +66,7 @@ impl TransportIdentifier for DnsIdentifier {
         let Some(peer) = arrival.property(PEER_ADDRESS) else {
             return Ok(None);
         };
-        let peer = parse_address(peer)?;
+        let peer = identify::peer::address(peer)?;
 
         let Some(name) = self.resolver.reverse(peer)? else {
             return Ok(None);
@@ -93,31 +91,10 @@ pub fn canonical(name: &str) -> String {
     name.trim().trim_end_matches('.').to_ascii_lowercase()
 }
 
-fn parse_address(text: &str) -> Result<IpAddr, IdentifyError> {
-    let text = text.trim();
-
-    if let Ok(address) = text.parse::<IpAddr>() {
-        return Ok(address);
-    }
-    if let Ok(socket) = text.parse::<SocketAddr>() {
-        return Ok(socket.ip());
-    }
-    if let Some(inner) = text
-        .strip_prefix('[')
-        .and_then(|rest| rest.strip_suffix(']'))
-        && let Ok(address) = inner.parse::<IpAddr>()
-    {
-        return Ok(address);
-    }
-
-    Err(IdentifyError::new(format!(
-        "the peer address {text:?} is not an IP address"
-    )))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::net::IpAddr;
     use stream::Stream;
     use xcore::StreamId;
 
