@@ -26,7 +26,7 @@
 //! nothing here.
 //!
 //! Property name this technology reads: `peer.address` (defined by
-//! `xmip-core-net`, `net::PEER_ADDRESS`). Evidence it writes: `peer.address` and
+//! `xmip-core-library-net`, `net::PEER_ADDRESS`). Evidence it writes: `peer.address` and
 //! `dns.forward-confirmed`, always `true` on a claim it presents.
 
 pub mod resolver;
