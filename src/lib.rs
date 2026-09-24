@@ -26,13 +26,13 @@
 //! nothing here.
 //!
 //! Property name this technology reads: `peer.address` (defined by
-//! `xmip-core-library-net`, `net::PEER_ADDRESS`). Evidence it writes: `peer.address` and
+//! `context::property::PEER_ADDRESS`). Evidence it writes: `peer.address` and
 //! `dns.forward-confirmed`, always `true` on a claim it presents.
 
 pub mod resolver;
 
+use context::property::PEER_ADDRESS;
 use identify::{IdentifyError, Presented, StreamArrival, TransportIdentifier};
-use net::PEER_ADDRESS;
 pub use resolver::{Resolver, StaticResolver};
 use xcore::{Arriving, Mechanism};
 
