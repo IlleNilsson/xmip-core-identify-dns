@@ -111,13 +111,13 @@ mod tests {
         text.parse().expect("an address")
     }
 
-    /// One partner whose reverse and forward agree, one whose reverse zone
+    /// One Party whose reverse and forward agree, one whose reverse zone
     /// claims a name the name does not claim back.
     fn resolver() -> StaticResolver {
         StaticResolver::new()
-            .reverse(address("192.0.2.10"), "mail.partner-x.example.")
-            .forward("mail.partner-x.example", address("192.0.2.10"))
-            .reverse(address("203.0.113.9"), "mail.partner-x.example")
+            .reverse(address("192.0.2.10"), "mail.party-x.example.")
+            .forward("mail.party-x.example", address("192.0.2.10"))
+            .reverse(address("203.0.113.9"), "mail.party-x.example")
     }
 
     fn identifier() -> DnsIdentifier {
@@ -135,7 +135,7 @@ mod tests {
             .expect("read")
             .expect("a claim");
 
-        assert_eq!(claim.value, "mail.partner-x.example");
+        assert_eq!(claim.value, "mail.party-x.example");
         assert_eq!(claim.established, xcore::Established::Detected);
         assert_eq!(
             claim.evidence,
@@ -148,7 +148,7 @@ mod tests {
 
     #[test]
     fn a_reverse_name_the_forward_zone_does_not_claim_back_is_no_claim() {
-        // Whoever holds 203.0.113.9's reverse zone wrote partner-x's name in
+        // Whoever holds 203.0.113.9's reverse zone wrote party-x's name in
         // it. The name's own zone does not point back, so nothing is claimed.
         let stream = stream();
         let facts = facts(&[("peer.address", "203.0.113.9")]);
