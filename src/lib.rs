@@ -93,12 +93,6 @@ pub fn canonical(name: &str) -> String {
 mod tests {
     use super::*;
     use std::net::IpAddr;
-    use stream::Stream;
-    use xcore::StreamId;
-
-    fn stream() -> Stream {
-        Stream::new(StreamId::new(1), b"<order/>".to_vec(), None)
-    }
 
     fn facts(pairs: &[(&str, &str)]) -> Vec<(String, String)> {
         pairs
@@ -126,9 +120,8 @@ mod tests {
 
     #[test]
     fn a_forward_confirmed_reverse_name_is_detected() {
-        let stream = stream();
         let facts = facts(&[("peer.address", "192.0.2.10:44123")]);
-        let arrival = StreamArrival::new(&stream, Arriving::Pushed, "smtp://xmip/in", &facts);
+        let arrival = StreamArrival::new(Arriving::Pushed, "smtp://xmip/in", &facts);
 
         let claim = identifier()
             .identify(&arrival)
@@ -150,31 +143,28 @@ mod tests {
     fn a_reverse_name_the_forward_zone_does_not_claim_back_is_no_claim() {
         // Whoever holds 203.0.113.9's reverse zone wrote party-x's name in
         // it. The name's own zone does not point back, so nothing is claimed.
-        let stream = stream();
         let facts = facts(&[("peer.address", "203.0.113.9")]);
-        let arrival = StreamArrival::new(&stream, Arriving::Pushed, "smtp://xmip/in", &facts);
+        let arrival = StreamArrival::new(Arriving::Pushed, "smtp://xmip/in", &facts);
 
         assert!(identifier().identify(&arrival).expect("read").is_none());
     }
 
     #[test]
     fn a_peer_with_no_reverse_record_presents_nothing() {
-        let stream = stream();
         let facts = facts(&[("peer.address", "198.51.100.17")]);
-        let arrival = StreamArrival::new(&stream, Arriving::Pushed, "smtp://xmip/in", &facts);
+        let arrival = StreamArrival::new(Arriving::Pushed, "smtp://xmip/in", &facts);
 
         assert!(identifier().identify(&arrival).expect("read").is_none());
 
-        let arrival = StreamArrival::new(&stream, Arriving::Pushed, "smtp://xmip/in", &[]);
+        let arrival = StreamArrival::new(Arriving::Pushed, "smtp://xmip/in", &[]);
 
         assert!(identifier().identify(&arrival).expect("read").is_none());
     }
 
     #[test]
     fn a_peer_that_is_not_an_address_is_an_error() {
-        let stream = stream();
         let facts = facts(&[("peer.address", "not-an-address")]);
-        let arrival = StreamArrival::new(&stream, Arriving::Pushed, "smtp://xmip/in", &facts);
+        let arrival = StreamArrival::new(Arriving::Pushed, "smtp://xmip/in", &facts);
 
         let failure = identifier().identify(&arrival).expect_err("not an address");
 
@@ -186,9 +176,8 @@ mod tests {
 
     #[test]
     fn a_scheduled_pickup_has_no_peer_to_name() {
-        let stream = stream();
         let facts = facts(&[("peer.address", "192.0.2.10")]);
-        let arrival = StreamArrival::new(&stream, Arriving::Scheduled, "imap://mail/inbox", &facts);
+        let arrival = StreamArrival::new(Arriving::Scheduled, "imap://mail/inbox", &facts);
 
         assert!(identifier().identify(&arrival).expect("read").is_none());
     }
