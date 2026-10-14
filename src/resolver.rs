@@ -121,10 +121,9 @@ mod tests {
             Resolver::forward(&table, "localhost.").expect("asked"),
             vec![loopback]
         );
-        assert!(
-            Resolver::forward(&table, "elsewhere")
-                .expect("asked")
-                .is_empty()
+        assert_eq!(
+            Resolver::forward(&table, "elsewhere").expect("asked"),
+            [] as [std::net::IpAddr; 0]
         );
     }
 
