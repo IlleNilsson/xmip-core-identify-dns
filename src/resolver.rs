@@ -48,8 +48,7 @@ pub fn forward_by_system(name: &str) -> Result<Vec<IpAddr>, IdentifyError> {
 
     Ok((name, 0u16)
         .to_socket_addrs()
-        .map(|addresses| addresses.map(|socket| socket.ip()).collect())
-        .unwrap_or_default())
+        .map_or_default(|addresses| addresses.map(|socket| socket.ip()).collect()))
 }
 
 /// A resolver that answers from a table. What the tests use, and what a
